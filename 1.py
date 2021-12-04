@@ -39,7 +39,6 @@ for i in range(len(e)):
         max_value = e[i]
 
 
-#최댓값, 최솟값 찾기
 
 
 
