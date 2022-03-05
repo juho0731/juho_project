@@ -4,8 +4,8 @@ from datetime import datetime
 from datetime import timedelta
 
 # 스크린과 한 픽셀의 크기를 정의
-SCREEN_WIDTH = 400
-SCREEN_HEIGHT = 400
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
 BLOCK_SIZE = 20
 
 # 뱀게임에 사용할 색상을 정의
@@ -13,6 +13,8 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 GRAY = (127, 127, 127)
+BLUE = (0, 0, 255)
+
 
 # pygame 모듈 초기화
 pygame.init()
@@ -91,14 +93,16 @@ class Apple:
         draw_block(screen, self.color, self.position)
 
     # 사과를 랜덤한 위치로 이동 시키는 함수
-    def random_move(self):
+    def random_move(self, snake):
         self.position = [random.randint(0, 19), random.randint(0, 19)]
+        while self.position in snake.positions:
+            self.position = [random.randint(0, 19), random.randint(0, 19)]
 
 # 게임을 정의하는 클래스
 class Game:
     # 생성시 뱀과 사과의 인스턴스를 생성한다.
     def __init__(self):
-        self.snake = Snake(GREEN, [9, 9], Offset.NONE)
+        self.snake = Snake(GREEN, [9, 9], Offset.UP)
         self.apple = Apple(RED, [3, 3])
 
     # 배경과 생성된 인스턴스들을 그리는 함수
@@ -134,12 +138,18 @@ class Game:
             if self.snake.positions[0] == self.apple.position:
                 # 사과를 없애고 새로운 위치에 생성
                 # 뱀의 길이를 한칸 늘려줌
-                self.apple.random_move()
+            # TODO: 사과가 뱀 위에 생성 되지 않게 하기
+                self.apple.random_move(self.snake)
                 self.snake.grow()
 
             # TODO: 뱀이 꼬리나 벽에 충돌했을때 처리
+            shead = self.snake.positions[0]
+            if shead[0] < 0 or shead[0] > 19 or shead[1] < 0 or shead[1] > 19:
+                exit()
+            if shead in self.snake.positions[1:]:
+                exit()
 
-            if timedelta(milliseconds=300) <= datetime.now() - last_movement:
+            if timedelta(milliseconds=80) <= datetime.now() - last_movement:
                 self.snake.move()
                 last_movement = datetime.now()
                 keydown_flag = False
@@ -148,5 +158,3 @@ class Game:
 
 game = Game()
 game.start()
-
-
