@@ -1,0 +1,15 @@
+def bouble_sort(list_a):
+    n = len(list_a)
+    for i in range(n - 1):
+        for j in range(n - i - 1):
+            if list_a[j] > list_a[j + 1]:
+                list_a[j], list_a[j + 1] = list_a[j + 1], list_a[j]
+    return list_a
+
+
+n = int(input())
+a = []
+for i in range(n):
+    a.append(int(input()))
+for i in bouble_sort(a):
+    print(i)
