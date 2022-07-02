@@ -1,0 +1,130 @@
+class HangulStudy:
+    def __init__(self, num):
+        if type(num) not in (int, str):
+            raise TypeError(str(type(num)) + "는(은) int나 str 타입이 아닙니다.")
+
+        self.num = num
+
+    def __str__(self):
+        # 입력받은 수가 이미 문자열이면 변환하지 않음
+        if type(self.num) == str:
+            return self.num
+
+        # 입력받은 수가 0이면 "영" 리턴
+        if self.num == 0:
+            return "영"
+
+        int_num = self.num  # 기존 정수 숫자
+
+        # 숫자
+        digit_list = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"]
+        # 십 ~ 천 단위
+        low_part_list = {1: "", 10: "십", 100: "백", 1000: "천", }
+        # 억 ~ 조 단위
+        high_part_list = {1: "", 10000: "만", 100000000: "억", 1000000000000: "조"}
+        # 최대 읽을 수 있는 단위 "조"
+        max_part_div = 1000000000000
+
+        # 음수인 경우 앞에 "마이너스"를 붙이고 숫자는 양수로 만들어줌
+        sign_str = ""
+        if int_num < 0:
+            int_num *= -1
+            sign_str = "마이너스"
+
+        # 정수를 한글로 만드는 재귀함수 (숫자를 최상위 자리수부터 4개씩 끊으면 구하기 쉽다)
+        # num: 정수값, part_div: 나눌값 ["조", "억", "만"]단위
+        def get_hangul_num(num, high_part_div):
+
+            # 정수값이 0이면 아무것도 반환 안함
+            if num == 0:
+                return ""
+
+            # 현재 high_part_div 단위에 해당하는 4자리 숫자를 구함(4자리 보다 짧게 나올 수 있음)
+            part = num // high_part_div
+
+            # 현재 high_part_div 단위에서 수가 존재하지 않으면 다음 단위수를 구함
+            if part == 0:
+                return get_hangul_num(num % high_part_div, high_part_div // 10000)
+
+            # 현재 단위에서 숫자들이 존재하면 천,백,십,일의 자릿수로 이루어진 숫자들을 읽음
+            ret_str = ""  # 리턴할 문자열
+            low_part_div = 1000  # 천의 자리부터 구한다.
+            while part != 0:
+                digit = part // low_part_div
+                if digit != 0:
+                    if low_part_div == 1 or digit != 1:
+                        ret_str += digit_list[digit]  # 숫자를 읽음
+                    ret_str += low_part_list[low_part_div]  # low_part_div 단위를 읽음
+                    part %= low_part_div
+                low_part_div //= 10
+
+            ret_str += high_part_list[high_part_div]  # high_part_div 단위를 읽음
+
+            # 다음 단위도 구함
+            return ret_str + get_hangul_num(num % high_part_div, high_part_div // 10000)
+
+        return sign_str + get_hangul_num(int_num, max_part_div)
+
+    def __int__(self):
+        # 입력받은 수가 이미 숫자면 변환하지 않음
+        if type(self.num) == int:
+            return self.num
+
+        # 입력받은 수가 "영"이면 0 리턴
+        if self.num == "영":
+            return 0
+
+        str_num = str(self.num)  # 기존 문자열
+
+        # 먼저 부호를 추출함
+        sign = 1
+        if str_num.startswith("마이너스"):
+            str_num.lstrip("마이너스")
+            sign = -1
+        elif str_num.startswith("플러스"):
+            str_num.lstrip("플러스")
+
+        # 숫자
+        digit_list = {"일": 1, "이": 2, "삼": 3, "사": 4, "오": 5, "육": 6, "칠": 7, "팔": 8, "구": 9}
+
+        # 십~조 단위
+        part_list = {"십": 10, "백": 100, "천": 1000, "만": 10000, "억": 100000000, "조": 1000000000000}
+
+        # 허용되는 한글
+        allow = "일이삼사오육칠팔구십백천만억조"
+
+        # 해석 불가능한 한글 검사
+        for hangul in self.num:
+            if hangul not in allow:
+                raise ValueError(hangul + "은(는) 숫자로 해석되지 않습니다.")
+
+        # 한글 숫자를 정수로 해석
+        num = 0   # 만들어진 정수
+        high_part = 1  # 저장된 큰 단위(만억조)
+        part = 1  # 저장된 단위
+        digit = 0  # 저장된 숫자
+        for hangul in self.num[::-1]:  # 일의 자리부터 출발
+            if hangul in digit_list.keys():   # 숫자의 경우
+                digit = digit_list[hangul]
+            elif hangul in part_list.keys():  # 단위의 경우
+                # 이전에 나온 큰 단위, 단위, 숫자를 곱하여 더함
+                if part != 1 and digit == 0:
+                    digit = 1
+                num += high_part * part * digit
+                digit = 0
+                if hangul in "만억조":
+                    high_part = part_list[hangul]
+                    part = 1
+                else:
+                    part = part_list[hangul]
+
+        # 마지막으로 나온 결과들을 더 해줌(이때 마지막 digit이 0이면 1로 바꾼다)
+        if digit == 0:
+            digit = 1
+        num += high_part * part * digit
+
+        return sign * num
+
+
+a = HangulStudy(1234567891234)
+print(str(a))
