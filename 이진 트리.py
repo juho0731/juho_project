@@ -10,12 +10,12 @@
 def binary_search(_list, data):
     right = len(_list)-1
     left = 0
-    while left < right:
+    while left <= right:
         middle = (right + left)//2
 
         if _list[middle] == data:
             return middle
-        elif middle > data:
+        elif _list[middle] > data:
             right = middle - 1
         else:
             left = middle +1
