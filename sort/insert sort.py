@@ -1,4 +1,4 @@
-def insert(a):
+def insert_sort(a):
     for i in range(1, len(a)):
         k = a[i]
         j = i
@@ -8,5 +8,5 @@ def insert(a):
         a[j] = k
 
 a = [3, 2, 5, 1, 4]
-insert(a)
+insert_sort(a)
 print(a)
