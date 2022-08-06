@@ -1,4 +1,4 @@
-def quick(a, left, right):
+def quick_sort(a, left, right):
     if right - left <1:
         return
     p = a[(left + right)//2]
@@ -11,11 +11,11 @@ def quick(a, left, right):
             j -= 1
         a[i], a[j] = a[j], a[i]
 
-    quick(a, left, i-1)
-    quick(a, j + 1, right)
+    quick_sort(a, left, i-1)
+    quick_sort(a, j + 1, right)
 
 a = [3, 9, 2, 8, 5, 1, 6, 4, 7]
-quick(a, 0, len(a)-1)
+quick_sort(a, 0, len(a)-1)
 print(a)
 
 
