@@ -1,4 +1,4 @@
-def selection(a):
+def selection_sort(a):
     for i in range(len(a)):
         k = i
         for j in range(i+1, len(a)):
@@ -7,5 +7,5 @@ def selection(a):
         a[k], a[i] = a[i], a[k]
 
 a = [3, 2, 5, 1, 4]
-selection(a)
+selection_sort(a)
 print(a)
