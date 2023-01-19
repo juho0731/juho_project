@@ -1,6 +1,5 @@
 class StackElement:
     #자기 자신의 아래쪽 링크를 정의해야 함(next)
-    pass
     def __init__(self, value, next):
         self.value = value
         self.next = next
