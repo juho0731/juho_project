@@ -9,7 +9,6 @@ class Queue:
         self.front = None
 #rear에 데이터를 붙인다.
     def enQueue(self,value):
-        pass
         if self.front is None:
             elem = Element(value, None)
             self.front = elem
