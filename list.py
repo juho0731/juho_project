@@ -10,6 +10,7 @@ class Mylist:
         self.tail = None
         for data in datas:
             self.append(data)
+
     def append(self,data):
         if self.head == None:
             node = Node(data)
@@ -34,8 +35,18 @@ class Mylist:
 
     def __len__(self):
         return self.lenght
+    
 
+    def __iter__(self):
+        a = self.head
+        while a:
+            yield a.data
+            a = a.link
 
-arr = Mylist(1,2,3,4)
-arr.append(5)
-print(arr)
+    def __getitem__(self, item):
+        a = self.head
+        if item == 0:
+            return self.head.data
+        for i in range(item):
+            a = a.link
+        return a.data
